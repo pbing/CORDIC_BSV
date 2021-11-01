@@ -32,9 +32,10 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n));
    Vector#(TAdd#(n, 3), FIFO#(Int#(TAdd#(n, TLog#(n)))))           zr <- replicateM(mkPipelineFIFO);
 
    Integer m = valueof(n);
+   Integer g = log2(m);
 
    function Int#(TAdd#(n, TLog#(n))) theta(Integer i);
-      return fromInteger(round(atan(2**(fromInteger(-i))) * 2**(fromInteger(m + log2(m) - 1)) / pi));
+      return fromInteger(round(atan(2**(fromInteger(-i))) * 2**(fromInteger(m + g - 1)) / pi));
    endfunction
 
    for (Integer i = 0; i < m + 3 - 1; i = i + 1)
