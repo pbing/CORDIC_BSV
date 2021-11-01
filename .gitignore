@@ -1,0 +1,6 @@
+bdir/
+bsim
+bsim.so
+sim/
+simdir/
+verilog/
