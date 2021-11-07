@@ -5,7 +5,6 @@ from math import sqrt, pi, cos, sin, atan, copysign, floor
 
 def cordic (x0, y0, z0, vectoring = False, iterations = 10):
     A = 1.0
-
     # Input scaling and
     # map argument -π...π to -π/2...π/2.
     if (vectoring and x0 < 0 and y0 >= 0) or (not vectoring and z0 < -pi/2):
@@ -16,14 +15,10 @@ def cordic (x0, y0, z0, vectoring = False, iterations = 10):
         x, y, z  = x0, y0, z0
 
     for i in range(iterations):
-        A = A * sqrt(1 + 2**(-2 * i))
-        pow2 = 2**(-i)
-        if vectoring:
-            d = -copysign(1, y)
-        else:
-            d = copysign(1, z)
-
+        d       = -copysign(1, y) if vectoring else copysign(1, z)
+        pow2    = 2**(-i)
         x, y, z = x - y * d * pow2, y + x * d * pow2, z - d * atan(pow2)
+        A       = A * sqrt(1 + 2**(-2 * i))
     return x, y, z, A
 
 def main():
@@ -72,7 +67,7 @@ def main():
 
         # ideal response
         #x, y, z = A * x0 * cos(z0), A * x0 * sin(z0), 0
-        
+
         # error plot
         # Usage: python3 cordic.py | grep -v '0, 0, 0$'
         #x, y = x - A * x0 * cos(z0), y - A * x0 * sin(z0)
@@ -81,6 +76,6 @@ def main():
 
         print("%f, %f, %f, %d, %d, %d" % (x, y, z, round(x), round(y), round(z)))
     print("A=%f" % A)
-        
+
 if __name__ == "__main__":
     main()
