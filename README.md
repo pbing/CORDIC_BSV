@@ -60,4 +60,4 @@ Convergent rounding (round half to even) removes the bias completely.
 * [Ray Andraka, A survey of CORDIC algorithms for FPGA based computers.](http://www.andraka.com/files/crdcsrvy.pdf)
 * [CORDIC processor](https://github.com/pbing/CORDIC)
 * [Gisselquist Technology, Rounding numbers without adding a bias.](http://zipcpu.com/dsp/2017/07/22/rounding.html)
-* [Wikipedia, Rounding.](https://en.wikipedia.org/wiki/Rounding)
+* [Rounding (Wikipedia)](https://en.wikipedia.org/wiki/Rounding)
