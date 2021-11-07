@@ -31,8 +31,8 @@ Inputs are x0, y0 and z0. Outputs are x, y and z.
 
 |  mode                                            | x0            | y0            | z0 | x           | y        | z |
 |--------------------------------------------------|---------------|---------------|----|-------------|----------|---|
-| [sim/verilator/rotating/Request.cpp](rotating)   | 0x7fff        | 0             | θ  | A·cos(θ)    | A·sin(θ) | 0 |
-| [sim/verilator/vectoring/Request.cpp](vectoring) | 0x7fff·cos(θ) | 0x7fff·sin(θ) | 0  | A·0x7fff    | 0        | θ |
+| [rotating](sim/verilator/rotating/Request.cpp)   | 0x7fff        | 0             | θ  | A·cos(θ)    | A·sin(θ) | 0 |
+| [vectoring](sim/verilator/vectoring/Request.cpp) | 0x7fff·cos(θ) | 0x7fff·sin(θ) | 0  | A·0x7fff    | 0        | θ |
 
 ### Truncating
 |  mode     | xerr     | yerr     | zerr       |
