@@ -5,11 +5,11 @@
 #include "VmkCORDIC_16_wrapper.h"
 
 class Request {
- public:
   VmkCORDIC_16_wrapper *dut;
   size_t n;
   size_t i;
 
+ public:
   Request(VmkCORDIC_16_wrapper *dut, size_t n);
   void put();
 };
