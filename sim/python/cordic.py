@@ -18,7 +18,7 @@ def cordic (x0, y0, z0, vectoring = False, iterations = 10):
         d       = -copysign(1, y) if vectoring else copysign(1, z)
         pow2    = 2**(-i)
         x, y, z = x - y * d * pow2, y + x * d * pow2, z - d * atan(pow2)
-        A       = A * sqrt(1 + 2**(-2 * i))
+        A       = A * sqrt(1 + pow2 * pow2)
     return x, y, z, A
 
 def main():
