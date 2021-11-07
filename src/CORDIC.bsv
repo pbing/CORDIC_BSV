@@ -35,8 +35,14 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n));
    Integer g = log2(m);    // number of guard bits
    Integer h = 2**(g - 1); // half LSB for rounding
 
-   function Int#(TAdd#(n, TLog#(n))) theta(Integer i);
+   function Int#(k) theta(Integer i);
       return fromInteger(round(atan(2**(fromInteger(-i))) * 2**(fromInteger(m + g - 1)) / pi));
+   endfunction
+
+   function Int#(k) roundConvergent(Int#(k) x);
+      let xp = pack(x);
+      let r  = xp[g] == 1'b1 ? h : h - 1 ; // either 'b1000... or 'b0111...
+      return x + fromInteger(r);
    endfunction
 
    for (Integer i = 0; i < m + 4 - 1; i = i + 1)
@@ -61,9 +67,9 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n));
             end
          else begin
             /* convergent rounding */
-            xr[i+1].enq(x + fromInteger(pack(x)[g] == 1'b1 ? h : h - 1));
-            yr[i+1].enq(y + fromInteger(pack(y)[g] == 1'b1 ? h : h - 1));
-            zr[i+1].enq(z + fromInteger(pack(z)[g] == 1'b1 ? h : h - 1));
+            xr[i+1].enq(roundConvergent(x));
+            yr[i+1].enq(roundConvergent(y));
+            zr[i+1].enq(roundConvergent(z));
          end
          //$display("%t i=%3d x=%d y=%d z=%d theta=%d", $time, i, x, y, z, theta(i));
       endrule
