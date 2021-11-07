@@ -60,10 +60,10 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n));
                zr[i+1].enq(z - theta(i));
             end
          else begin
-            /* round half up */
-            xr[i+1].enq(x + fromInteger(h));
-            yr[i+1].enq(y + fromInteger(h));
-            zr[i+1].enq(z + fromInteger(h));
+            /* convergent rounding */
+            xr[i+1].enq(x + fromInteger(pack(x)[g] == 1'b1 ? h : h - 1));
+            yr[i+1].enq(y + fromInteger(pack(y)[g] == 1'b1 ? h : h - 1));
+            zr[i+1].enq(z + fromInteger(pack(z)[g] == 1'b1 ? h : h - 1));
          end
          //$display("%t i=%3d x=%d y=%d z=%d theta=%d", $time, i, x, y, z, theta(i));
       endrule
