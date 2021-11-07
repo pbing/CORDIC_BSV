@@ -35,10 +35,10 @@ Inputs are x0, y0 and z0. Outputs are x, y and z.
 | [vectoring](sim/verilator/vectoring/Request.cpp) | 0x7fff·cos(θ) | 0x7fff·sin(θ) | 0  | A·0x7fff    | 0        | θ |
 
 ### Truncating
-|  mode     | xerr     | yerr     | zerr       |
-|-----------|----------|----------|------------|
-| rotating  | 0.653896 | 0.649125 | 0.462326   |
-| vectoring | 1.430610 | 0.706653 | 255.996732 |
+|  mode                                             | xerr     | yerr     | zerr       |
+|---------------------------------------------------|----------|----------|------------|
+| [rotating](sim/verilator/rotating/Response.cpp)   | 0.653896 | 0.649125 | 0.462326   |
+| [vectoring](sim/verilator/vectoring/Response.cpp) | 1.430610 | 0.706653 | 255.996732 |
 
 ## Round half up
 t.b.d.
