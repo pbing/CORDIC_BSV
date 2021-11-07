@@ -20,7 +20,7 @@ module mkCORDIC_16 #(parameter Bool mode) (CORDICServer#(16));
 endmodule
 
 module mkTb(Empty);
-   Reg#(UInt#(32))  cycles <- mkReg(0);
+   Reg#(UInt#(32))   cycles <- mkReg(0);
    Reg#(Int#(16))    phase  <- mkReg(0);
    CORDICServer#(16) dut    <- mkCORDIC_16(rotating);
 
@@ -32,7 +32,7 @@ module mkTb(Empty);
       dut.request.put(req);
       cycles <= cycles + 1;
       phase <= phase + 1;
-      if (cycles == fromInteger(16 + 2**16 + 3)) $finish;
+      if (cycles == fromInteger(16 + 2**16 + 4)) $finish;
    endrule
 
    rule monitor;

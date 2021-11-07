@@ -26,19 +26,20 @@ typedef Server#(CORDICRequest#(n), CORDICResponse#(n)) CORDICServer#(numeric typ
 typedef Client#(CORDICRequest#(n), CORDICResponse#(n)) CORDICClient#(numeric type n);
 
 module mkCORDIC #(parameter Bool mode) (CORDICServer#(n));
-   /* n+3 stages for n+2 iterations with log2(n) guard bits */
-   Vector#(TAdd#(n, 3), FIFO#(Int#(TAdd#(TAdd#(n, 1), TLog#(n))))) xr <- replicateM(mkPipelineFIFO);
-   Vector#(TAdd#(n, 3), FIFO#(Int#(TAdd#(TAdd#(n, 1), TLog#(n))))) yr <- replicateM(mkPipelineFIFO);
-   Vector#(TAdd#(n, 3), FIFO#(Int#(TAdd#(n, TLog#(n)))))           zr <- replicateM(mkPipelineFIFO);
+   /* n+4 stages for n+2 iterations with log2(n) guard bits */
+   Vector#(TAdd#(n, 4), FIFO#(Int#(TAdd#(TAdd#(n, 1), TLog#(n))))) xr <- replicateM(mkPipelineFIFO);
+   Vector#(TAdd#(n, 4), FIFO#(Int#(TAdd#(TAdd#(n, 1), TLog#(n))))) yr <- replicateM(mkPipelineFIFO);
+   Vector#(TAdd#(n, 4), FIFO#(Int#(TAdd#(n, TLog#(n)))))           zr <- replicateM(mkPipelineFIFO);
 
    Integer m = valueof(n);
-   Integer g = log2(m);
+   Integer g = log2(m);    // number of guard bits
+   Integer h = 2**(g - 1); // half LSB for rounding
 
    function Int#(TAdd#(n, TLog#(n))) theta(Integer i);
       return fromInteger(round(atan(2**(fromInteger(-i))) * 2**(fromInteger(m + g - 1)) / pi));
    endfunction
 
-   for (Integer i = 0; i < m + 3 - 1; i = i + 1)
+   for (Integer i = 0; i < m + 4 - 1; i = i + 1)
       rule iterate;
          let x = xr[i].first;
          let y = yr[i].first;
@@ -47,15 +48,22 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n));
          yr[i].deq;
          zr[i].deq;
 
-         if ((mode == vectoring && y >= 0) || (mode == rotating && z < 0)) begin
-            xr[i+1].enq(x + (y >> i));
-            yr[i+1].enq(y - (x >> i));
-            zr[i+1].enq(z + theta(i));
-         end
+         if (i < m + 4 - 2)
+            if ((mode == vectoring && y >= 0) || (mode == rotating && z < 0)) begin
+               xr[i+1].enq(x + (y >> i));
+               yr[i+1].enq(y - (x >> i));
+               zr[i+1].enq(z + theta(i));
+            end
+            else begin
+               xr[i+1].enq(x - (y >> i));
+               yr[i+1].enq(y + (x >> i));
+               zr[i+1].enq(z - theta(i));
+            end
          else begin
-            xr[i+1].enq(x - (y >> i));
-            yr[i+1].enq(y + (x >> i));
-            zr[i+1].enq(z - theta(i));
+            /* round half up */
+            xr[i+1].enq(x + fromInteger(h));
+            yr[i+1].enq(y + fromInteger(h));
+            zr[i+1].enq(z + fromInteger(h));
          end
          //$display("%t i=%3d x=%d y=%d z=%d theta=%d", $time, i, x, y, z, theta(i));
       endrule

@@ -29,7 +29,7 @@ module mkTb(Empty);
    rule run;
       dut.request.put(req);
       cycles <= cycles + 1;
-      if (cycles == 16 + 3) $finish;
+      if (cycles == 16 + 4) $finish;
    endrule
 
    rule monitor;

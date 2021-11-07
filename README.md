@@ -34,6 +34,8 @@ Inputs are x0, y0 and z0. Outputs are x, y and z.
 | [rotating](sim/verilator/rotating/Request.cpp)   | 0x7fff        | 0             | θ  | A·cos(θ)    | A·sin(θ) | 0 |
 | [vectoring](sim/verilator/vectoring/Request.cpp) | 0x7fff·cos(θ) | 0x7fff·sin(θ) | 0  | A·0x7fff    | 0        | θ |
 
+Truncation of the outputs results in a negative bias of half a LSB. Rounding half up improves this bias.
+
 ### Truncating
 |  mode                                             | xerr     | yerr     | zerr       |
 |---------------------------------------------------|----------|----------|------------|
@@ -41,7 +43,10 @@ Inputs are x0, y0 and z0. Outputs are x, y and z.
 | [vectoring](sim/verilator/vectoring/Response.cpp) | 1.430610 | 0.706653 | 255.996732 |
 
 ## Round half up
-t.b.d.
+|  mode                                             | xerr     | yerr     | zerr     |
+|---------------------------------------------------|----------|----------|----------|
+| [rotating](sim/verilator/rotating/Response.cpp)   | 0.455022 | 0.455783 | 0.000000 |
+| [vectoring](sim/verilator/vectoring/Response.cpp) | 0.996475 | 0.052408 | 0.030258 |
 
 
 ## References
