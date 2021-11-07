@@ -42,7 +42,7 @@ Truncation of the outputs results in a negative bias of half a LSB. Rounding hal
 | [rotating](sim/verilator/rotating/Response.cpp)   | 0.653896 | 0.649125 | 0.462326   |
 | [vectoring](sim/verilator/vectoring/Response.cpp) | 1.430610 | 0.706653 | 255.996732 |
 
-## Round half up
+### Round half up
 |  mode                                             | xerr     | yerr     | zerr     |
 |---------------------------------------------------|----------|----------|----------|
 | [rotating](sim/verilator/rotating/Response.cpp)   | 0.455022 | 0.455783 | 0.000000 |
