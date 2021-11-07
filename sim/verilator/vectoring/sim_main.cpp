@@ -53,6 +53,9 @@ int main(int argc, char** argv) {
   dut->final();
   tfp->close();
 
+  rsp->calc_err();
+  printf("xerr=%f yerr=%f zerr=%f\n", rsp->xerr, rsp->yerr, rsp->zerr);
+
   delete req;
   delete rsp;
   delete dut;

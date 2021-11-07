@@ -1,3 +1,4 @@
+#include "math.h"
 #include "Response.h"
 
 Response::Response(VmkCORDIC_16_wrapper *dut, size_t n) {
@@ -34,8 +35,34 @@ void Response::get() {
       x[i] = signextend<int32_t, 17>(rx >> 33);
       y[i] = signextend<int32_t, 17>(ry >> 16);
       z[i] = signextend<int32_t, 17>(rz);
-      printf("get(): i=%zu rsp=0x%013llx x=%d, y=%d, z=%d\n", i, rsp, x[i], y[i], z[i]);
+      //printf("get(): i=%zu rsp=0x%013llx x=%d, y=%d, z=%d\n", i, rsp, x[i], y[i], z[i]);
       ++i;
     }
   }
+}
+
+void Response::calc_err() {
+  double A   = 1.0;
+  double ssx = 0.0;
+  double ssy = 0.0;
+  double ssz = 0.0;
+
+  /* scale factor */
+  for (int i = 0; i < 18; ++i) {
+    A *= sqrt(1.0 + exp2(-2 * i));
+  }
+
+  /* standard deviation */
+  for (int i = 0; i < n; ++i) {
+    double phi = M_PI * ((double)i / (double)0x8000u);
+    double xr = A * 0x7fff * cos(phi);
+    double yr = A * 0x7fff * sin(phi);
+    double zr = 0.0;
+    ssx += (x[i] - xr) * (x[i] - xr);
+    ssy += (y[i] - yr) * (y[i] - yr);
+    ssz += (z[i] - zr) * (z[i] - zr);
+  }
+  xerr = sqrt(ssx / n);
+  yerr = sqrt(ssy / n);
+  zerr = sqrt(ssz / n);
 }
