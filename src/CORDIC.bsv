@@ -36,13 +36,12 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n))
    Vector#(TAdd#(n, 4), FIFO#(Int#(m1))) yr <- replicateM(mkPipelineFIFO);
    Vector#(TAdd#(n, 4), FIFO#(Int#(m)))  zr <- replicateM(mkPipelineFIFO);
 
-   Integer h = 2**(valueof(g) - 1); // half LSB for rounding
-
    function Int#(m) theta(Integer i);
       return fromInteger(round(atan(2**(fromInteger(-i))) * 2**(fromInteger(valueof(m) - 1)) / pi));
    endfunction
 
    function Int#(k) roundConvergent(Int#(k) x);
+      Integer h = 2**(valueof(g) - 1); // half LSB for rounding
       let xp = pack(x);
       let r  = xp[valueof(g)] == 1'b1 ? h : h - 1 ; // either 'b1000... or 'b0111...
       return x + fromInteger(r);
