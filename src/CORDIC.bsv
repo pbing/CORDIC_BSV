@@ -25,27 +25,30 @@ typedef struct {
 typedef Server#(CORDICRequest#(n), CORDICResponse#(n)) CORDICServer#(numeric type n);
 typedef Client#(CORDICRequest#(n), CORDICResponse#(n)) CORDICClient#(numeric type n);
 
-module mkCORDIC #(parameter Bool mode) (CORDICServer#(n));
+module mkCORDIC #(parameter Bool mode) (CORDICServer#(n))
+   provisos (Log#(n, g),
+             Add#(n, 1, n1),
+             Add#(n, g, m),
+             Add#(TAdd#(n, 1), g, m1),
+             Add#(a__, n, m1));
    /* n+4 stages for n+2 iterations with log2(n) guard bits */
-   Vector#(TAdd#(n, 4), FIFO#(Int#(TAdd#(TAdd#(n, 1), TLog#(n))))) xr <- replicateM(mkPipelineFIFO);
-   Vector#(TAdd#(n, 4), FIFO#(Int#(TAdd#(TAdd#(n, 1), TLog#(n))))) yr <- replicateM(mkPipelineFIFO);
-   Vector#(TAdd#(n, 4), FIFO#(Int#(TAdd#(n, TLog#(n)))))           zr <- replicateM(mkPipelineFIFO);
+   Vector#(TAdd#(n, 4), FIFO#(Int#(m1))) xr <- replicateM(mkPipelineFIFO);
+   Vector#(TAdd#(n, 4), FIFO#(Int#(m1))) yr <- replicateM(mkPipelineFIFO);
+   Vector#(TAdd#(n, 4), FIFO#(Int#(m)))  zr <- replicateM(mkPipelineFIFO);
 
-   Integer m = valueof(n);
-   Integer g = log2(m);    // number of guard bits
-   Integer h = 2**(g - 1); // half LSB for rounding
+   Integer h = 2**(valueof(g) - 1); // half LSB for rounding
 
-   function Int#(k) theta(Integer i);
-      return fromInteger(round(atan(2**(fromInteger(-i))) * 2**(fromInteger(m + g - 1)) / pi));
+   function Int#(m) theta(Integer i);
+      return fromInteger(round(atan(2**(fromInteger(-i))) * 2**(fromInteger(valueof(m) - 1)) / pi));
    endfunction
 
    function Int#(k) roundConvergent(Int#(k) x);
       let xp = pack(x);
-      let r  = xp[g] == 1'b1 ? h : h - 1 ; // either 'b1000... or 'b0111...
+      let r  = xp[valueof(g)] == 1'b1 ? h : h - 1 ; // either 'b1000... or 'b0111...
       return x + fromInteger(r);
    endfunction
 
-   for (Integer i = 0; i < m + 4 - 1; i = i + 1)
+   for (Integer i = 0; i < valueof(n) + 4 - 1; i = i + 1)
       rule iterate;
          let x = xr[i].first;
          let y = yr[i].first;
@@ -54,7 +57,7 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n));
          yr[i].deq;
          zr[i].deq;
 
-         if (i < m + 4 - 2)
+         if (i < valueof(n) + 4 - 2)
             if ((mode == vectoring && y >= 0) || (mode == rotating && z < 0)) begin
                xr[i+1].enq(x + (y >> i));
                yr[i+1].enq(y - (x >> i));
@@ -76,12 +79,10 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n));
 
    interface Put request;
       method Action put(req);
-         Integer m = valueof(n);
-         Integer g = log2(m);
-         Int#(TAdd#(TAdd#(n, 1), TLog#(n))) x    = extend(req.x) << g;
-         Int#(TAdd#(TAdd#(n, 1), TLog#(n))) y    = extend(req.y) << g;
-         Int#(TAdd#(n, TLog#(n)))           z    = extend(req.z) << g;
-         Int#(TAdd#(n, TLog#(n)))           pi_2 = fromInteger(2**(m + g - 2)); // π/2
+         Int#(m1) x    = extend(req.x) << valueof(g);
+         Int#(m1) y    = extend(req.y) << valueof(g);
+         Int#(m)  z    = extend(req.z) << valueof(g);
+         Int#(m)  pi_2 = fromInteger(2**(valueof(m) - 2)); // π/2
 
          /* map argument -π...π to -π/2...π/2 */
          if ((mode == vectoring && x < 0 && y >= 0) || (mode == rotating && z < (-pi_2))) begin
@@ -111,11 +112,9 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n));
          last(yr).deq;
          last(zr).deq;
 
-         Integer m = valueof(n);
-         Integer g = log2(m);
-         return CORDICResponse {x: truncate(x >> g),
-                                y: truncate(y >> g),
-                                z: truncate(z >> g)};
+         return CORDICResponse {x: truncate(x >> valueof(g)),
+                                y: truncate(y >> valueof(g)),
+                                z: truncate(z >> valueof(g))};
       endmethod
    endinterface
 endmodule
