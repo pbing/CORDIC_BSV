@@ -27,7 +27,7 @@ bsc -verilog -u ./test/Tb1.bsv
 
 ## Simulated errors
 Error calculation was done with Verilator. The module mkCORDIC_16 (16 bit inputs, 17/16 bit outputs) was used.
-Inputs are x0, y0 and z0. Outputs are x, y and z.
+Inputs are x0, y0 and z0. Outputs are x, y and zi with A=1.646760.
 
 |  mode                                            | x0            | y0            | z0 | x           | y        | z |
 |--------------------------------------------------|---------------|---------------|----|-------------|----------|---|
