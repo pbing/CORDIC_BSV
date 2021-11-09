@@ -34,9 +34,7 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n))
              Add#(n, 4, stages),
              Add#(b__, 1, stages));
    /* n+4 stages for n+2 iterations with log2(n) guard bits */
-   Vector#(stages, FIFO#(Int#(m1))) xr <- replicateM(mkPipelineFIFO);
-   Vector#(stages, FIFO#(Int#(m1))) yr <- replicateM(mkPipelineFIFO);
-   Vector#(stages, FIFO#(Int#(m)))  zr <- replicateM(mkPipelineFIFO);
+   Vector#(stages, FIFO#(CORDICResponse#(m))) stg <- replicateM(mkPipelineFIFO);
 
    function Int#(m) theta(Integer i);
       return fromInteger(round(atan(2**(fromInteger(-i))) * 2**(fromInteger(valueof(m) - 1)) / pi));
@@ -51,30 +49,31 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n))
 
    for (Integer i = 0; i < valueof(stages) - 1; i = i + 1)
       rule iterate;
-         let x = xr[i].first;
-         let y = yr[i].first;
-         let z = zr[i].first;
-         xr[i].deq;
-         yr[i].deq;
-         zr[i].deq;
+         let s = stg[i].first;
+         stg[i].deq;
+         
+         let x = s.x;
+         let y = s.y;
+         let z = s.z;
+         CORDICResponse#(m) s1;
 
          if (i < valueof(stages) - 2)
-            if ((mode == vectoring && y >= 0) || (mode == rotating && z < 0)) begin
-               xr[i+1].enq(x + (y >> i));
-               yr[i+1].enq(y - (x >> i));
-               zr[i+1].enq(z + theta(i));
-            end
-            else begin
-               xr[i+1].enq(x - (y >> i));
-               yr[i+1].enq(y + (x >> i));
-               zr[i+1].enq(z - theta(i));
-            end
-         else begin
+            /* iterating */
+            if ((mode == vectoring && y >= 0) || (mode == rotating && z < 0))
+               s1 = CORDICResponse {x: x + (y >> i),
+                                    y: y - (x >> i),
+                                    z: z + theta(i)};
+            else
+               s1 = CORDICResponse {x: x - (y >> i),
+                                    y: y + (x >> i),
+                                    z: z - theta(i)};
+         else
             /* convergent rounding */
-            xr[i+1].enq(roundConvergent(x));
-            yr[i+1].enq(roundConvergent(y));
-            zr[i+1].enq(roundConvergent(z));
-         end
+            s1 = CORDICResponse {x: roundConvergent(x),
+                                 y: roundConvergent(y),
+                                 z: roundConvergent(z)};
+         
+         stg[i+1].enq(s1);
          //$display("%t i=%3d x=%d y=%d z=%d theta=%d", $time, i, x, y, z, theta(i));
       endrule
 
@@ -84,34 +83,34 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n))
          Int#(m1) y    = extend(req.y) << valueof(g);
          Int#(m)  z    = extend(req.z) << valueof(g);
          Int#(m)  pi_2 = fromInteger(2**(valueof(m) - 2)); // π/2
+         CORDICResponse#(m) s;
 
          /* map argument -π...π to -π/2...π/2 */
-         if ((mode == vectoring && x < 0 && y >= 0) || (mode == rotating && z < (-pi_2))) begin
-            head(xr).enq(y);
-            head(yr).enq(-x);
-            head(zr).enq(z + pi_2);
-         end
-         else if ((mode == vectoring && x < 0 && y < 0) || (mode == rotating && z >= pi_2)) begin
-            head(xr).enq(-y);
-            head(yr).enq(x);
-            head(zr).enq(z - pi_2);
-         end
-         else begin
-            head(xr).enq(x);
-            head(yr).enq(y);
-            head(zr).enq(z);
-         end
+         if ((mode == vectoring && x < 0 && y >= 0) || (mode == rotating && z < (-pi_2)))
+            s = CORDICResponse {x: y,
+                                y: -x,
+                                z: z + pi_2};
+         else if ((mode == vectoring && x < 0 && y < 0) || (mode == rotating && z >= pi_2))
+            s = CORDICResponse {x: -y,
+                                y: x,
+                                z: z - pi_2};
+         else
+            s = CORDICResponse {x: x,
+                                y: y,
+                                z: z};
+
+         head(stg).enq(s);
       endmethod
    endinterface
 
    interface Get response;
       method ActionValue#(CORDICResponse#(n)) get();
-         let x = last(xr).first;
-         let y = last(yr).first;
-         let z = last(zr).first;
-         last(xr).deq;
-         last(yr).deq;
-         last(zr).deq;
+         let s = last(stg).first;
+         last(stg).deq;
+      
+         let x = s.x;
+         let y = s.y;
+         let z = s.z;
 
          return CORDICResponse {x: truncate(x >> valueof(g)),
                                 y: truncate(y >> valueof(g)),
