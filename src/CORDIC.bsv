@@ -30,11 +30,13 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n))
              Add#(n, 1, n1),
              Add#(n, g, m),
              Add#(TAdd#(n, 1), g, m1),
-             Add#(a__, n, m1));
+             Add#(a__, n, m1),
+             Add#(n, 4, stages),
+             Add#(b__, 1, stages));
    /* n+4 stages for n+2 iterations with log2(n) guard bits */
-   Vector#(TAdd#(n, 4), FIFO#(Int#(m1))) xr <- replicateM(mkPipelineFIFO);
-   Vector#(TAdd#(n, 4), FIFO#(Int#(m1))) yr <- replicateM(mkPipelineFIFO);
-   Vector#(TAdd#(n, 4), FIFO#(Int#(m)))  zr <- replicateM(mkPipelineFIFO);
+   Vector#(stages, FIFO#(Int#(m1))) xr <- replicateM(mkPipelineFIFO);
+   Vector#(stages, FIFO#(Int#(m1))) yr <- replicateM(mkPipelineFIFO);
+   Vector#(stages, FIFO#(Int#(m)))  zr <- replicateM(mkPipelineFIFO);
 
    function Int#(m) theta(Integer i);
       return fromInteger(round(atan(2**(fromInteger(-i))) * 2**(fromInteger(valueof(m) - 1)) / pi));
@@ -47,7 +49,7 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n))
       return x + fromInteger(r);
    endfunction
 
-   for (Integer i = 0; i < valueof(n) + 4 - 1; i = i + 1)
+   for (Integer i = 0; i < valueof(stages) - 1; i = i + 1)
       rule iterate;
          let x = xr[i].first;
          let y = yr[i].first;
@@ -56,7 +58,7 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n))
          yr[i].deq;
          zr[i].deq;
 
-         if (i < valueof(n) + 4 - 2)
+         if (i < valueof(stages) - 2)
             if ((mode == vectoring && y >= 0) || (mode == rotating && z < 0)) begin
                xr[i+1].enq(x + (y >> i));
                yr[i+1].enq(y - (x >> i));
@@ -85,19 +87,19 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n))
 
          /* map argument -π...π to -π/2...π/2 */
          if ((mode == vectoring && x < 0 && y >= 0) || (mode == rotating && z < (-pi_2))) begin
-            head(xr).enq(y);
-            head(yr).enq(-x);
-            head(zr).enq(z + pi_2);
+            xr[0].enq(y);
+            yr[0].enq(-x);
+            zr[0].enq(z + pi_2);
          end
          else if ((mode == vectoring && x < 0 && y < 0) || (mode == rotating && z >= pi_2)) begin
-            head(xr).enq(-y);
-            head(yr).enq(x);
-            head(zr).enq(z - pi_2);
+            xr[0].enq(-y);
+            yr[0].enq(x);
+            zr[0].enq(z - pi_2);
          end
          else begin
-            head(xr).enq(x);
-            head(yr).enq(y);
-            head(zr).enq(z);
+            xr[0].enq(x);
+            yr[0].enq(y);
+            zr[0].enq(z);
          end
       endmethod
    endinterface
