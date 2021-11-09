@@ -87,19 +87,19 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n))
 
          /* map argument -π...π to -π/2...π/2 */
          if ((mode == vectoring && x < 0 && y >= 0) || (mode == rotating && z < (-pi_2))) begin
-            xr[0].enq(y);
-            yr[0].enq(-x);
-            zr[0].enq(z + pi_2);
+            head(xr).enq(y);
+            head(yr).enq(-x);
+            head(zr).enq(z + pi_2);
          end
          else if ((mode == vectoring && x < 0 && y < 0) || (mode == rotating && z >= pi_2)) begin
-            xr[0].enq(-y);
-            yr[0].enq(x);
-            zr[0].enq(z - pi_2);
+            head(xr).enq(-y);
+            head(yr).enq(x);
+            head(zr).enq(z - pi_2);
          end
          else begin
-            xr[0].enq(x);
-            yr[0].enq(y);
-            zr[0].enq(z);
+            head(xr).enq(x);
+            head(yr).enq(y);
+            head(zr).enq(z);
          end
       endmethod
    endinterface
