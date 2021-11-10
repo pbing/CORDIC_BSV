@@ -114,13 +114,9 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n))
          let s = last(stg).first;
          last(stg).deq;
 
-         let x = s.x;
-         let y = s.y;
-         let z = s.z;
-
-         return CORDICResponse {x: truncate(x >> valueof(g)),
-                                y: truncate(y >> valueof(g)),
-                                z: truncate(z >> valueof(g))};
+         return CORDICResponse {x: truncate(s.x >> valueof(g)),
+                                y: truncate(s.y >> valueof(g)),
+                                z: truncate(s.z >> valueof(g))};
       endmethod
    endinterface
 endmodule
