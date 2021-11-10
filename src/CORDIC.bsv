@@ -51,7 +51,7 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n))
       rule iterate;
          let s = stg[i].first;
          stg[i].deq;
-         
+
          let x = s.x;
          let y = s.y;
          let z = s.z;
@@ -59,20 +59,23 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n))
 
          if (i < valueof(stages) - 2)
             /* iterating */
-            if ((mode == vectoring && y >= 0) || (mode == rotating && z < 0))
-               s1 = CORDICResponse {x: x + (y >> i),
-                                    y: y - (x >> i),
-                                    z: z + theta(i)};
-            else
-               s1 = CORDICResponse {x: x - (y >> i),
-                                    y: y + (x >> i),
-                                    z: z - theta(i)};
-         else
+            if ((mode == vectoring && y >= 0) || (mode == rotating && z < 0)) begin
+               s1.x = x + (y >> i);
+               s1.y = y - (x >> i);
+               s1.z = z + theta(i);
+            end
+            else begin
+               s1.x = x - (y >> i);
+               s1.y = y + (x >> i);
+               s1.z = z - theta(i);
+            end
+         else begin
             /* convergent rounding */
-            s1 = CORDICResponse {x: roundConvergent(x),
-                                 y: roundConvergent(y),
-                                 z: roundConvergent(z)};
-         
+            s1.x = roundConvergent(x);
+            s1.y = roundConvergent(y);
+            s1.z = roundConvergent(z);
+         end
+
          stg[i+1].enq(s1);
          //$display("%t i=%3d x=%d y=%d z=%d theta=%d", $time, i, x, y, z, theta(i));
       endrule
@@ -86,18 +89,21 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n))
          CORDICResponse#(m) s;
 
          /* map argument -π...π to -π/2...π/2 */
-         if ((mode == vectoring && x < 0 && y >= 0) || (mode == rotating && z < (-pi_2)))
-            s = CORDICResponse {x: y,
-                                y: -x,
-                                z: z + pi_2};
-         else if ((mode == vectoring && x < 0 && y < 0) || (mode == rotating && z >= pi_2))
-            s = CORDICResponse {x: -y,
-                                y: x,
-                                z: z - pi_2};
-         else
-            s = CORDICResponse {x: x,
-                                y: y,
-                                z: z};
+         if ((mode == vectoring && x < 0 && y >= 0) || (mode == rotating && z < (-pi_2))) begin
+            s.x = y;
+            s.y = -x;
+            s.z = z + pi_2;
+         end
+         else if ((mode == vectoring && x < 0 && y < 0) || (mode == rotating && z >= pi_2)) begin
+            s.x = -y;
+            s.y = x;
+            s.z = z - pi_2;
+         end
+         else begin
+            s.x = x;
+            s.y = y;
+            s.z = z;
+         end
 
          head(stg).enq(s);
       endmethod
@@ -107,7 +113,7 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n))
       method ActionValue#(CORDICResponse#(n)) get();
          let s = last(stg).first;
          last(stg).deq;
-      
+
          let x = s.x;
          let y = s.y;
          let z = s.z;
