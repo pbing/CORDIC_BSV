@@ -24,6 +24,10 @@ or
 ```shell
 bsc -verilog -u ./test/Tb1.bsv
 ```
+or
+```shell
+./mkRTL.sh ./test/Tb1.bsv
+```
 
 ## Simulated errors
 Error calculation was done with Verilator. The module mkCORDIC_16 (16 bit inputs, 17/16 bit outputs) was used.
