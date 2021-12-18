@@ -59,6 +59,7 @@ int main(int argc, char** argv) {
 
   delete req;
   delete rsp;
+  delete tfp;
   delete dut;
   return 0;
 }
