@@ -23,12 +23,12 @@ double sc_time_stamp() {
 int main(int argc, char** argv) {
   Verilated::commandArgs(argc, argv);
 
-  unique_ptr<VmkCORDIC_r_16> dut(new VmkCORDIC_r_16);
-  unique_ptr<Request>        req(new Request(dut.get(), 0x10000));
-  unique_ptr<Response>       rsp(new Response(dut.get(), 0x10000));
+  auto dut = make_unique<VmkCORDIC_r_16>();
+  auto req = make_unique<Request>(dut.get(), 0x10000);
+  auto rsp = make_unique<Response>(dut.get(), 0x10000);
 
   Verilated::traceEverOn(true);
-  unique_ptr<VerilatedFstC> tfp(new VerilatedFstC);
+  auto tfp = make_unique<VerilatedFstC>();
   dut->trace(tfp.get(), 99);
   tfp->open("dump.fst");
 
