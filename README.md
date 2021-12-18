@@ -22,11 +22,11 @@ or
 
 ### Create RTL
 ```shell
-bsc -verilog -u ./test/Tb1.bsv
+bsc -verilog -u ./test/Modules.bsv
 ```
 or
 ```shell
-./mkRTL.sh ./test/Tb1.bsv
+./mkRTL.sh ./test/Modules.bsv
 ```
 
 ## Simulated errors
@@ -42,22 +42,22 @@ Truncation of the outputs results in a negative bias of half a LSB. Rounding hal
 Convergent rounding (round half to even) removes the bias completely.
 
 ### Truncating
-|  mode                                             | xerr     | yerr     | zerr       |
-|---------------------------------------------------|----------|----------|------------|
-| [rotating](sim/verilator/rotating/Response.cpp)   | 0.653896 | 0.649125 | 0.462326   |
-| [vectoring](sim/verilator/vectoring/Response.cpp) | 1.430610 | 0.706653 | 255.996732 |
+|  mode                                             | xerr     | yerr     | zerr     |
+|---------------------------------------------------|----------|----------|----------|
+| [rotating](sim/verilator/rotating/Response.cpp)   | 0.719910 | 0.721136 | 0.779059 |
+| [vectoring](sim/verilator/vectoring/Response.cpp) | 1.629323 | 0.706697 | 0.705270 |
 
 ### Round half up
 |  mode                                             | xerr     | yerr     | zerr     |
 |---------------------------------------------------|----------|----------|----------|
-| [rotating](sim/verilator/rotating/Response.cpp)   | 0.455022 | 0.455783 | 0.000000 |
-| [vectoring](sim/verilator/vectoring/Response.cpp) | 0.996475 | 0.052408 | 0.030258 |
+| [rotating](sim/verilator/rotating/Response.cpp)   | 0.528804 | 0.528490 | 0.000000 |
+| [vectoring](sim/verilator/vectoring/Response.cpp) | 1.135224 | 0.612970 | 0.044194 |
 
 ### Convergent rounding
 |  mode                                             | xerr     | yerr     | zerr     |
 |---------------------------------------------------|----------|----------|----------|
-| [rotating](sim/verilator/rotating/Response.cpp)   | 0.454515 | 0.454371 | 0.000000 |
-| [vectoring](sim/verilator/vectoring/Response.cpp) | 1.031536 | 0.042791 | 0.029232 |
+| [rotating](sim/verilator/rotating/Response.cpp)   | 0.528636 | 0.528556 | 0.000000 |
+| [vectoring](sim/verilator/vectoring/Response.cpp) | 1.143312 | 0.604851 | 0.044194 |
 
 ## References
 * [CORDIC (Wikipedia)](https://en.wikipedia.org/wiki/CORDIC)

@@ -32,8 +32,11 @@ module mkTb(Empty);
 //   CORDICRequest#(16) req = CORDICRequest {x: scale(-10000),
 //                                           y: 0,
 //                                           z: 0};
-   CORDICRequest#(16) req = CORDICRequest {x: 0,
-                                           y: scale(-10000),
+//   CORDICRequest#(16) req = CORDICRequest {x: 0,
+//                                           y: scale(-10000),
+//                                           z: 0};
+   CORDICRequest#(16) req = CORDICRequest {x: scale(7071),
+                                           y: scale(7071),
                                            z: 0};
 
    rule run;

@@ -1,7 +1,7 @@
 #include "math.h"
 #include "Response.h"
 
-Response::Response(VmkCORDIC_16_wrapper *dut, size_t n) {
+Response::Response(VmkCORDIC_r_16 *dut, size_t n) {
   this->dut = dut;
   this->n = n;
   i = 0;
@@ -27,6 +27,7 @@ inline T signextend(const T x)
 void Response::get() {
   if (i < n) {
     if (dut->RDY_response_get == 1) {
+      dut->EN_response_get = 1;
       int64_t rsp = dut->response_get;
 
       int64_t rx = (rsp & ((int64_t)0x1ffff << 33));
@@ -34,9 +35,11 @@ void Response::get() {
       int64_t rz = (rsp & 0xffff);
       x[i] = signextend<int32_t, 17>(rx >> 33);
       y[i] = signextend<int32_t, 17>(ry >> 16);
-      z[i] = signextend<int32_t, 17>(rz);
+      z[i] = signextend<int32_t, 16>(rz);
       //printf("get(): i=%zu rsp=0x%013llx x=%d, y=%d, z=%d\n", i, rsp, x[i], y[i], z[i]);
       ++i;
+    } else {
+      dut->EN_response_get = 0;
     }
   }
 }
@@ -51,6 +54,7 @@ void Response::calc_err() {
   for (int i = 0; i < 18; ++i) {
     A *= sqrt(1.0 + exp2(-2 * i));
   }
+  //printf("A=%f\n", A);
 
   /* standard deviation */
   for (int i = 0; i < n; ++i) {
@@ -58,9 +62,16 @@ void Response::calc_err() {
     double xr = A * 0x7fff * cos(phi);
     double yr = A * 0x7fff * sin(phi);
     double zr = 0.0;
-    ssx += (x[i] - xr) * (x[i] - xr);
-    ssy += (y[i] - yr) * (y[i] - yr);
-    ssz += (z[i] - zr) * (z[i] - zr);
+    double xd = x[i] - xr;
+    double yd = y[i] - yr;
+    double zd = z[i] - zr;
+    ssx += xd * xd;
+    ssy += yd * yd;
+    ssz += zd * zd;
+    //printf("x[%0d]=%0d xr=%f sxx=%f    y[%0d]=%0d yr=%f syy=%f    z[%0d]=%0d zr=%0f szz=%f  \n",
+    //       i, x[i], xr, ssx,
+    //       i, y[i], yr, ssy,
+    //       i, z[i], zr, ssz);
   }
   xerr = sqrt(ssx / n);
   yerr = sqrt(ssy / n);

@@ -1,2 +1,2 @@
 #!/bin/zsh
-./obj_dir/VmkCORDIC_16_wrapper $@
+./obj_dir/VmkCORDIC_r_16 $@

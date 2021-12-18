@@ -19,6 +19,7 @@ module mkCORDIC_16 #(parameter Bool mode) (CORDICServer#(16));
    return m;
 endmodule
 
+(* synthesize *)
 module mkTb(Empty);
    Reg#(UInt#(32))   cycles <- mkReg(0);
    CORDICServer#(16) dut    <- mkCORDIC_16(rotating);

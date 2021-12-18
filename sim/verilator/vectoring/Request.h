@@ -1,17 +1,14 @@
-#ifndef VERILATED_REQUEST_H
-#define VERILATED_REQUEST_H
+#pragma once
 
 #include <verilated.h>
-#include "VmkCORDIC_16_wrapper.h"
+#include "VmkCORDIC_v_16.h"
 
 class Request {
-  VmkCORDIC_16_wrapper *dut;
+  VmkCORDIC_v_16 *dut;
   size_t n;
   size_t i;
 
  public:
-  Request(VmkCORDIC_16_wrapper *dut, size_t n);
-  void put();
+  Request(VmkCORDIC_v_16 *dut, size_t n);
+  void put(vluint64_t t);
 };
-
-#endif

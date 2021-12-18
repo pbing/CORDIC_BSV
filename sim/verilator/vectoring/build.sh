@@ -1,6 +1,11 @@
 #!/bin/zsh
-verilator -Wno-lint --trace \
-          -y verilog \
-          --cc mkCORDIC_16_wrapper.v mkCORDIC_16.v \
-          --exe --build \
-          sim_main.cpp Request.cpp Response.cpp
+verilator --cc \
+          --exe \
+          --build \
+          --trace-fst --trace-depth 1 \
+          -Wno-lint \
+          -y ../../../verilog \
+          mkCORDIC_v_16.v \
+          Request.cpp \
+          Response.cpp \
+          sim_main.cpp
