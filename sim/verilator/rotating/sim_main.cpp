@@ -23,13 +23,13 @@ double sc_time_stamp() {
 int main(int argc, char** argv) {
   Verilated::commandArgs(argc, argv);
 
-  VmkCORDIC_r_16       *dut = new VmkCORDIC_r_16;
-  unique_ptr<Request>  req(new Request(dut, 0x10000));
-  unique_ptr<Response> rsp(new Response(dut, 0x10000));
+  unique_ptr<VmkCORDIC_r_16> dut(new VmkCORDIC_r_16);
+  unique_ptr<Request>        req(new Request(dut.get(), 0x10000));
+  unique_ptr<Response>       rsp(new Response(dut.get(), 0x10000));
 
   Verilated::traceEverOn(true);
-  VerilatedFstC *tfp = new VerilatedFstC;
-  dut->trace(tfp, 99);
+  unique_ptr<VerilatedFstC> tfp(new VerilatedFstC);
+  dut->trace(tfp.get(), 99);
   tfp->open("dump.fst");
 
   dut->CLK   = 0;
@@ -56,7 +56,5 @@ int main(int argc, char** argv) {
   rsp->calc_err();
   printf("xerr=%f yerr=%f zerr=%f\n", rsp->xerr, rsp->yerr, rsp->zerr);
 
-  delete tfp;
-  delete dut;
   return 0;
 }
