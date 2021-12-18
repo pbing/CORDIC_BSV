@@ -24,8 +24,8 @@ inline T signextend(const T x)
 }
 
 void Response::get() {
-  if (i < n) {
-    if (dut->RDY_response_get == 1) {
+  if (dut->CLK == 1) {
+    if (i < n && dut->RDY_response_get == 1) {
       dut->EN_response_get = 1;
       int64_t rsp = dut->response_get;
 

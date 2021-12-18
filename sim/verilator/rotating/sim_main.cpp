@@ -6,6 +6,8 @@
 #include "Request.h"
 #include "Response.h"
 
+using namespace std;
+
 // Current simulation time
 // This is a 64-bit integer to reduce wrap over issues and
 // allow modulus.  This is in units of the timeprecision
@@ -21,9 +23,9 @@ double sc_time_stamp() {
 int main(int argc, char** argv) {
   Verilated::commandArgs(argc, argv);
 
-  VmkCORDIC_r_16 *dut = new VmkCORDIC_r_16;
-  Request  *req       = new Request(dut, 0x10000);
-  Response *rsp       = new Response(dut, 0x10000);
+  VmkCORDIC_r_16       *dut = new VmkCORDIC_r_16;
+  unique_ptr<Request>  req(new Request(dut, 0x10000));
+  unique_ptr<Response> rsp(new Response(dut, 0x10000));
 
   Verilated::traceEverOn(true);
   VerilatedFstC *tfp = new VerilatedFstC;
@@ -41,11 +43,8 @@ int main(int argc, char** argv) {
     if (dut->CLK == 1 && main_time > 3) {
       dut->RST_N = 1;
     }
-
-    if (dut->CLK == 1) {
-      req->put(main_time);
-      rsp->get();
-    }
+    req->put(main_time);
+    rsp->get();
 
     tfp->dump(main_time);
     main_time++;
@@ -57,8 +56,6 @@ int main(int argc, char** argv) {
   rsp->calc_err();
   printf("xerr=%f yerr=%f zerr=%f\n", rsp->xerr, rsp->yerr, rsp->zerr);
 
-  delete req;
-  delete rsp;
   delete tfp;
   delete dut;
   return 0;

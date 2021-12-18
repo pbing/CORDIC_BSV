@@ -8,7 +8,7 @@ Request::Request(VmkCORDIC_v_16 *dut, size_t n) {
 }
 
 void Request::put(vluint64_t t) {
-  if (i < n) {
+  if (dut->CLK == 1) {
     if (t > 20 && dut->RDY_request_put == 1) {
       double phi = M_PI * ((double)i / (double)0x8000u);
       int16_t x = 0x7fff * cos(phi);
@@ -24,8 +24,5 @@ void Request::put(vluint64_t t) {
       dut->request_put = 0xaaaaaaaaaaaaaaaa;
       dut->EN_request_put = 0;
     }
-  } else {
-    dut->request_put = 0xaaaaaaaaaaaaaaaa;
-    dut->EN_request_put = 0;
-  } 
+  }
 }

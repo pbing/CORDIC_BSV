@@ -1,4 +1,3 @@
-#include "math.h"
 #include "Response.h"
 
 Response::Response(VmkCORDIC_r_16 *dut, size_t n) {
@@ -25,8 +24,8 @@ inline T signextend(const T x)
 }
 
 void Response::get() {
-  if (i < n) {
-    if (dut->RDY_response_get == 1) {
+  if (dut->CLK == 1) {
+    if (i < n && dut->RDY_response_get == 1) {
       dut->EN_response_get = 1;
       int64_t rsp = dut->response_get;
 
@@ -36,6 +35,7 @@ void Response::get() {
       x[i] = signextend<int32_t, 17>(rx >> 33);
       y[i] = signextend<int32_t, 17>(ry >> 16);
       z[i] = signextend<int32_t, 16>(rz);
+
       //printf("get(): i=%zu rsp=0x%013llx x=%d, y=%d, z=%d\n", i, rsp, x[i], y[i], z[i]);
       ++i;
     } else {
