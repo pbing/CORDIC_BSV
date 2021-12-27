@@ -6,8 +6,6 @@
 #include "Request.h"
 #include "Response.h"
 
-using namespace std;
-
 // Current simulation time
 // This is a 64-bit integer to reduce wrap over issues and
 // allow modulus.  This is in units of the timeprecision
@@ -23,12 +21,12 @@ double sc_time_stamp() {
 int main(int argc, char** argv) {
   Verilated::commandArgs(argc, argv);
 
-  auto dut = make_unique<VmkCORDIC_v_16>();
-  auto req = make_unique<Request>(dut.get(), 0x10000);
-  auto rsp = make_unique<Response>(dut.get(), 0x10000);
+  auto dut = std::make_unique<VmkCORDIC_v_16>();
+  auto req = std::make_unique<Request>(dut.get(), 0x10000);
+  auto rsp = std::make_unique<Response>(dut.get(), 0x10000);
 
   Verilated::traceEverOn(true);
-  auto tfp = make_unique<VerilatedFstC>();
+  auto tfp = std::make_unique<VerilatedFstC>();
   dut->trace(tfp.get(), 99);
   tfp->open("dump.fst");
 
