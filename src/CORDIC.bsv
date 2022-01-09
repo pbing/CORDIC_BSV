@@ -4,7 +4,6 @@ import ClientServer::*;
 import FIFO::*;
 import GetPut::*;
 import Real::*;
-import SpecialFIFOs::*;
 import Vector::*;
 
 export rotating, vectoring,
@@ -65,7 +64,7 @@ module mkCORDIC #(parameter Bool mode) (CORDICServer#(n))
    stage[1..n+1]: iterations
    stage[n+2]   : last interation, rounded
    */
-   Vector#(stages, FIFO#(DataPath#(nxy, nz))) stg <- replicateM(mkPipelineFIFO);
+   Vector#(stages, FIFO#(DataPath#(nxy, nz))) stg <- replicateM(mkLFIFO);
 
    for (Integer i = 0; i < valueOf(stages) - 1; i = i + 1)
       rule iterate;
