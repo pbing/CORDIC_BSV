@@ -18,7 +18,7 @@ void Request::put(vluint64_t t) {
       dut->request_put = req;
       dut->EN_request_put = 1;
 
-      //printf("put(): i=%zu x=%d, y=%d, z=%d req=0x%012llx\n", i, x, y, z, req);
+      //VL_PRINTF("put(): i=%zu x=%" PRId16 " y=%" PRId16 " z=%" PRId16 " req=0x%012" PRIx64"\n", i, x, y, z, req);
       ++i;
     } else {
       dut->request_put = 0xaaaaaaaaaaaaaaaa;

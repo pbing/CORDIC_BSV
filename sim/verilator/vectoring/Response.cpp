@@ -36,7 +36,7 @@ void Response::get() {
       y[i] = signextend<int32_t, 17>(ry >> 16);
       z[i] = signextend<int32_t, 16>(rz);
 
-      //printf("get(): i=%zu rsp=0x%013llx x=%d, y=%d, z=%d\n", i, rsp, x[i], y[i], z[i]);
+      //VL_PRINTF("get(): i=%zu rsp=0x%013" PRIx64 " x=%" PRId32" y=%" PRId32 " z=%" PRId16"\n", i, rsp, x[i], y[i], z[i]);
       ++i;
     } else {
       dut->EN_response_get = 0;
@@ -69,7 +69,7 @@ void Response::calc_err() {
       zd += 0x10000;
     else if (zd > 0x8000)
       zd -= 0x10000;
-    
+
     ssx += xd * xd;
     ssy += yd * yd;
     ssz += zd * zd;
