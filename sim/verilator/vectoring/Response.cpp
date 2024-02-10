@@ -65,18 +65,15 @@ void Response::calc_err() {
     double yd = y[i] - yr;
     double zd = z[i] - zr;
 
-    if (zd < -0x8000)
-      zd += 0x10000;
-    else if (zd > 0x8000)
-      zd -= 0x10000;
-
     ssx += xd * xd;
     ssy += yd * yd;
     ssz += zd * zd;
-    //printf("x[%0d]=%0d xr=%f sxx=%f    y[%0d]=%0d yr=%f syy=%f    z[%0d]=%0d zr=%0f szz=%f  \n",
-    //       i, x[i], xr, ssx,
-    //       i, y[i], yr, ssy,
-    //       i, z[i], zr, ssz);
+#if 0
+    printf("x[%0d]=%0d xr=%f sxx=%f    y[%0d]=%0d yr=%f syy=%f    z[%0d]=%0d zr=%0f szz=%f  \n",
+           i, x[i], xr, ssx,
+           i, y[i], yr, ssy,
+           i, z[i], zr, ssz);
+#endif
   }
   xerr = sqrt(ssx / n);
   yerr = sqrt(ssy / n);
