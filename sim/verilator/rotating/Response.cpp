@@ -144,5 +144,5 @@ void Response::enob(size_t bin) {
   // ENOB
   // https://scdn.rohde-schwarz.com/ur/pws/dl_downloads/dl_application/application_notes/1er03/ENOB_Technical_Paper_1ER03_1e.pdf
   xenob = 0.5 * (log2(xf / sxx) - log2(1.5));
-  yenob = 0.5 * (log2(yf / sxx) - log2(1.5));
+  yenob = 0.5 * (log2(yf / syy) - log2(1.5));
 }
