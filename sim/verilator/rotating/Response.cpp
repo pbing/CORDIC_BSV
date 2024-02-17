@@ -134,6 +134,11 @@ void Response::enob(size_t bin) {
       sxx += x2[i] + x2[n-i];
       syy += y2[i] + y2[n-i];
     }
+  // add bin at Nyquist frequency
+  sxx += x2[n/2];
+  syy += y2[n/2];
+  // adjust bias for the two missing bins
+  // (n - 1) -> (n - 3)
   sxx *= static_cast<double>(n) / (n - 3);
   syy *= static_cast<double>(n) / (n - 3);
 
