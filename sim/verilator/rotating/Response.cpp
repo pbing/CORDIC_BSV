@@ -89,33 +89,33 @@ void Response::calc_err() {
 void Response::enob(size_t bin) {
   // FFT of x and y
   int err;
-  double *xh = new double[n];
-  double *yh = new double[n];
+  auto xh = std::make_unique<double[]>(n);
+  auto yh = std::make_unique<double[]>(n);
 
   for (size_t i = 0; i < n; ++i) {
     xh[i] = static_cast<double>(x[i]);
     yh[i] = static_cast<double>(y[i]);
   }
 
-  err = gsl_fft_real_radix2_transform(xh, 1, n);
+  err = gsl_fft_real_radix2_transform(xh.get(), 1, n);
   if (err < 0) fprintf(stderr, "FFT(x)=%s", gsl_strerror(err));
 
-  err = gsl_fft_real_radix2_transform(yh, 1, n);
+  err = gsl_fft_real_radix2_transform(yh.get(), 1, n);
   if (err < 0) fprintf(stderr, "FFT(y)=%s", gsl_strerror(err));
 
   // convert half complex array to complex array
-  double *xc = new double[2*n];
-  double *yc = new double[2*n];
+  auto xc = std::make_unique<double[]>(2*n);
+  auto yc = std::make_unique<double[]>(2*n);
 
-  err = gsl_fft_halfcomplex_radix2_unpack(xh, xc, 1, n);
+  err = gsl_fft_halfcomplex_radix2_unpack(xh.get(), xc.get(), 1, n);
   if (err < 0) fputs(gsl_strerror(err), stderr);
 
-  err = gsl_fft_halfcomplex_radix2_unpack(yh, yc, 1, n);
+  err = gsl_fft_halfcomplex_radix2_unpack(yh.get(), yc.get(), 1, n);
   if (err < 0) fputs(gsl_strerror(err), stderr);
 
   // calculate power
-  double *x2 = new double[n];
-  double *y2 = new double[n];
+  auto x2 = std::make_unique<double[]>(n);
+  auto y2 = std::make_unique<double[]>(n);
 
   for (size_t i = 0; i < n; ++i) {
     gsl_complex zx, zy;
@@ -145,11 +145,4 @@ void Response::enob(size_t bin) {
   // https://scdn.rohde-schwarz.com/ur/pws/dl_downloads/dl_application/application_notes/1er03/ENOB_Technical_Paper_1ER03_1e.pdf
   xenob = 0.5 * (log2(xf / sxx) - log2(1.5));
   yenob = 0.5 * (log2(yf / sxx) - log2(1.5));
-
-  delete[] xh;
-  delete[] yh;
-  delete[] xc;
-  delete[] yc;
-  delete[] x2;
-  delete[] y2;
 }
