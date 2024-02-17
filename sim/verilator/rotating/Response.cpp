@@ -1,3 +1,9 @@
+#include <complex>
+#include <gsl/gsl_complex_math.h>
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_fft_halfcomplex.h>
+#include <gsl/gsl_fft_real.h>
+
 #include "Response.h"
 
 Response::Response(VmkCORDIC_r_16 *dut, size_t n) {
@@ -75,7 +81,75 @@ void Response::calc_err() {
            i, z[i], zr, ssz);
 #endif
   }
-  xerr = sqrt(ssx / n);
-  yerr = sqrt(ssy / n);
-  zerr = sqrt(ssz / n);
+  xerr = sqrt(ssx / (n - 1));
+  yerr = sqrt(ssy / (n - 1));
+  zerr = sqrt(ssz / (n - 1));
+}
+
+void Response::enob(size_t bin) {
+  // FFT of x and y
+  int err;
+  double *xh = new double[n];
+  double *yh = new double[n];
+
+  for (size_t i = 0; i < n; ++i) {
+    xh[i] = static_cast<double>(x[i]);
+    yh[i] = static_cast<double>(y[i]);
+  }
+
+  err = gsl_fft_real_radix2_transform(xh, 1, n);
+  if (err < 0) fprintf(stderr, "FFT(x)=%s", gsl_strerror(err));
+
+  err = gsl_fft_real_radix2_transform(yh, 1, n);
+  if (err < 0) fprintf(stderr, "FFT(y)=%s", gsl_strerror(err));
+
+  // convert half complex array to complex array
+  double *xc = new double[2*n];
+  double *yc = new double[2*n];
+
+  err = gsl_fft_halfcomplex_radix2_unpack(xh, xc, 1, n);
+  if (err < 0) fputs(gsl_strerror(err), stderr);
+
+  err = gsl_fft_halfcomplex_radix2_unpack(yh, yc, 1, n);
+  if (err < 0) fputs(gsl_strerror(err), stderr);
+
+  // calculate power
+  double *x2 = new double[n];
+  double *y2 = new double[n];
+
+  for (size_t i = 0; i < n; ++i) {
+    gsl_complex zx, zy;
+    GSL_SET_COMPLEX(&zx, xc[2*i], xc[2*i+1]);
+    GSL_SET_COMPLEX(&zy, yc[2*i], yc[2*i+1]);
+    x2[i] = gsl_complex_abs2(zx);
+    y2[i] = gsl_complex_abs2(zy);
+  }
+
+  // noise and distorsions
+  // omit DC component and fundamental frequency
+  double sxx = 0.0;
+  double syy = 0.0;
+  for (size_t i = 1; i < n / 2; ++i)
+    if (i != bin) {
+      sxx += x2[i] + x2[n-i];
+      syy += y2[i] + y2[n-i];
+    }
+  sxx *= static_cast<double>(n) / (n - 3);
+  syy *= static_cast<double>(n) / (n - 3);
+
+  // fundamental frequency
+  double xf = x2[bin] + x2[n-bin];
+  double yf = y2[bin] + y2[n-bin];
+
+  // ENOB
+  // https://scdn.rohde-schwarz.com/ur/pws/dl_downloads/dl_application/application_notes/1er03/ENOB_Technical_Paper_1ER03_1e.pdf
+  xenob = 0.5 * (log2(xf / sxx) - log2(1.5));
+  yenob = 0.5 * (log2(yf / sxx) - log2(1.5));
+
+  delete[] xh;
+  delete[] yh;
+  delete[] xc;
+  delete[] yc;
+  delete[] x2;
+  delete[] y2;
 }

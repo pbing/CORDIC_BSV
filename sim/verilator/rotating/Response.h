@@ -13,9 +13,11 @@ class Response {
 
  public:
   double xerr, yerr, zerr;
+  double xenob, yenob; 
 
   Response(VmkCORDIC_r_16 *dut, size_t n);
   ~Response();
   void get();
   void calc_err();
+  void enob(size_t bin);
 };

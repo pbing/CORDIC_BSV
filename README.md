@@ -54,10 +54,10 @@ Convergent rounding (round half to even) removes the bias completely.
 | [vectoring](sim/verilator/vectoring/Response.cpp) | 1.135224 | 0.612970 | 0.044194 |
 
 ### Convergent rounding
-|  mode                                             | xerr     | yerr     | zerr     |
-|---------------------------------------------------|----------|----------|----------|
-| [rotating](sim/verilator/rotating/Response.cpp)   | 0.528636 | 0.528556 | 0.000000 |
-| [vectoring](sim/verilator/vectoring/Response.cpp) | 1.143312 | 0.604851 | 0.044194 |
+|  mode                                             | xerr     | yerr     | zerr     | xenob     | yenob     |
+|---------------------------------------------------|----------|----------|----------|-----------|-----------| 
+| [rotating](sim/verilator/rotating/Response.cpp)   | 0.528640 | 0.528560 | 0.000000 | 15.888153 | 15.888153 |
+| [vectoring](sim/verilator/vectoring/Response.cpp) | 1.143321 | 0.604856 | 0.044195 | -         | -         |
 
 ## References
 * [CORDIC (Wikipedia)](https://en.wikipedia.org/wiki/CORDIC)

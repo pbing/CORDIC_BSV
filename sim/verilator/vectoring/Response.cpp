@@ -75,7 +75,7 @@ void Response::calc_err() {
            i, z[i], zr, ssz);
 #endif
   }
-  xerr = sqrt(ssx / n);
-  yerr = sqrt(ssy / n);
-  zerr = sqrt(ssz / n);
+  xerr = sqrt(ssx / (n - 1));
+  yerr = sqrt(ssy / (n - 1));
+  zerr = sqrt(ssz / (n - 1));
 }

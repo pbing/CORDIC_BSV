@@ -44,7 +44,10 @@ int main(int argc, char** argv) {
   tfp->close();
 
   rsp->calc_err();
+  rsp->enob(1);
   printf("xerr=%f yerr=%f zerr=%f\n", rsp->xerr, rsp->yerr, rsp->zerr);
+  printf("xenob=%f yenob=%f\n", rsp->xenob, rsp->yenob);
+
 
   return 0;
 }
