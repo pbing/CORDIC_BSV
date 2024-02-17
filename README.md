@@ -56,7 +56,7 @@ Convergent rounding (round half to even) removes the bias completely.
 ### Convergent rounding
 |  mode                                             | xerr     | yerr     | zerr     | xenob     | yenob     |
 |---------------------------------------------------|----------|----------|----------|-----------|-----------| 
-| [rotating](sim/verilator/rotating/Response.cpp)   | 0.528640 | 0.528560 | 0.000000 | 15.888153 | 15.888267 |
+| [rotating](sim/verilator/rotating/Response.cpp)   | 0.528640 | 0.528560 | 0.000000 | 15.888164 | 15.888278 |
 | [vectoring](sim/verilator/vectoring/Response.cpp) | 1.143321 | 0.604856 | 0.044195 | -         | -         |
 
 ## References

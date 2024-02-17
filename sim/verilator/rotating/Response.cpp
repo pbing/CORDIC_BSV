@@ -125,7 +125,7 @@ void Response::enob(size_t bin) {
     y2[i] = gsl_complex_abs2(zy);
   }
 
-  // noise and distorsions
+  // noise and distortions
   // omit DC component and fundamental frequency
   double sxx = 0.0;
   double syy = 0.0;
@@ -135,16 +135,23 @@ void Response::enob(size_t bin) {
       syy += y2[i] + y2[n-i];
     }
   // add bin at Nyquist frequency
-  sxx += x2[n/2];
-  syy += y2[n/2];
+  if (bin != n/2) {
+    sxx += x2[n/2];
+    syy += y2[n/2];
+  }
   // adjust bias for the two missing bins
   // (n - 1) -> (n - 3)
-  sxx *= static_cast<double>(n) / (n - 3);
-  syy *= static_cast<double>(n) / (n - 3);
+  sxx /= n * (n - 3);
+  syy /= n * (n - 3);
+
+  double sdx = sqrt(sxx);
+  double sdy = sqrt(syy);
+  //printf("sdx=%f sdy=%f\n", sdx, sdy); // should be the same like xerr, yerr
 
   // fundamental frequency
-  double xf = x2[bin] + x2[n-bin];
-  double yf = y2[bin] + y2[n-bin];
+  double xf = (x2[bin] + x2[n-bin]) / (n * (n - 1));
+  double yf = (y2[bin] + y2[n-bin]) / (n * (n - 1));
+  //printf("peak(xf)=%f peak(yf)=%f\n", sqrt(2 * xf), sqrt(2 * yf)); // amplitude = sqrt(2) * RMS
 
   // ENOB
   // https://scdn.rohde-schwarz.com/ur/pws/dl_downloads/dl_application/application_notes/1er03/ENOB_Technical_Paper_1ER03_1e.pdf
