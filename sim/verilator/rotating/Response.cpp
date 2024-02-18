@@ -62,6 +62,15 @@ void Response::calc_err() {
   }
   //printf("A=%f\n", A);
 
+#if 0
+  /* DEBUG: Ideal 16-bit response */
+  for (int i = 0; i < n; ++i) {
+    double phi = M_PI * ((double)i / (double)0x8000u);
+    x[i] = A * 0x7fff * cos(phi);
+    y[i] = A * 0x7fff * sin(phi);
+  }
+#endif
+
   /* standard deviation */
   for (int i = 0; i < n; ++i) {
     double phi = M_PI * ((double)i / (double)0x8000u);
