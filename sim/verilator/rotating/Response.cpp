@@ -10,15 +10,12 @@ Response::Response(VmkCORDIC_r_16 *dut, size_t n) {
   this->dut = dut;
   this->n = n;
   i = 0;
-  x = new int32_t[n];
-  y = new int32_t[n];
-  z = new int16_t[n];
+  x = std::make_shared<int32_t[]>(n);
+  y = std::make_shared<int32_t[]>(n);
+  z = std::make_shared<int32_t[]>(n);
 }
 
 Response::~Response() {
-  delete x;
-  delete y;
-  delete z;
 }
 
 // https://graphics.stanford.edu/~seander/bithacks.html#FixedSignExtend
@@ -66,8 +63,8 @@ void Response::calc_err() {
   /* DEBUG: Ideal 16-bit response */
   for (int i = 0; i < n; ++i) {
     double phi = M_PI * ((double)i / (double)0x8000u);
-    x[i] = A * 0x7fff * cos(phi);
-    y[i] = A * 0x7fff * sin(phi);
+    x[i] = lround(A * 0x7fff * cos(phi));
+    y[i] = lround(A * 0x7fff * sin(phi));
   }
 #endif
 
