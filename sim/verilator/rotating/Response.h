@@ -7,9 +7,9 @@ class Response {
   VmkCORDIC_r_16 *dut;
   size_t  n;
   size_t  i;
-  std::shared_ptr<int32_t[]> x;
-  std::shared_ptr<int32_t[]> y;
-  std::shared_ptr<int32_t[]> z; 
+  std::unique_ptr<int32_t[]> x;
+  std::unique_ptr<int32_t[]> y;
+  std::unique_ptr<int32_t[]> z; 
 
  public:
   double xerr, yerr, zerr;

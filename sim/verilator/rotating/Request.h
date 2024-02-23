@@ -10,5 +10,5 @@ class Request {
 
  public:
   Request(VmkCORDIC_r_16 *dut, size_t n);
-  void put(vluint64_t t);
+  void put(uint64_t t);
 };

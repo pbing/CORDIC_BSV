@@ -4,9 +4,9 @@ Response::Response(VmkCORDIC_v_16 *dut, size_t n) {
   this->dut = dut;
   this->n = n;
   i = 0;
-  x = std::make_shared<int32_t[]>(n);
-  y = std::make_shared<int32_t[]>(n);
-  z = std::make_shared<int32_t[]>(n);
+  x = std::make_unique<int32_t[]>(n);
+  y = std::make_unique<int32_t[]>(n);
+  z = std::make_unique<int32_t[]>(n);
 }
 
 Response::~Response() {
