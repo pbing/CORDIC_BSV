@@ -4,7 +4,7 @@
 #include "VmkCORDIC_r_16.h"
 
 class Response {
-  VmkCORDIC_r_16 *dut;
+  std::shared_ptr<VmkCORDIC_r_16> dut;
   size_t  n;
   size_t  i;
   std::unique_ptr<int32_t[]> x;
@@ -15,7 +15,7 @@ class Response {
   double xerr, yerr, zerr;
   double xenob, yenob; 
 
-  Response(VmkCORDIC_r_16 *dut, size_t n);
+  Response(std::shared_ptr<VmkCORDIC_r_16> dut, size_t n);
   ~Response();
   void get();
   void calc_err();

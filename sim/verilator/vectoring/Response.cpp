@@ -1,9 +1,6 @@
 #include "Response.h"
 
-Response::Response(VmkCORDIC_v_16 *dut, size_t n) {
-  this->dut = dut;
-  this->n = n;
-  i = 0;
+Response::Response(std::shared_ptr<VmkCORDIC_v_16> dut, size_t n) : dut(dut), n(n), i(0) {
   x = std::make_unique<int32_t[]>(n);
   y = std::make_unique<int32_t[]>(n);
   z = std::make_unique<int32_t[]>(n);

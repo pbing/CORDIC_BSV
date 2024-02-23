@@ -13,9 +13,9 @@ int main(int argc, char** argv) {
   const std::unique_ptr<VerilatedContext> contextp{new VerilatedContext};
   contextp->commandArgs(argc, argv);
 
-  auto dut = std::make_unique<VmkCORDIC_r_16>();
-  auto req = std::make_unique<Request>(dut.get(), 0x10000);
-  auto rsp = std::make_unique<Response>(dut.get(), 0x10000);
+  auto dut = std::make_shared<VmkCORDIC_r_16>();
+  auto req = std::make_unique<Request>(dut, 0x10000);
+  auto rsp = std::make_unique<Response>(dut, 0x10000);
 
   contextp->traceEverOn(true);
   auto tfp = std::make_unique<VerilatedFstC>();

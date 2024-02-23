@@ -1,10 +1,6 @@
 #include "Request.h"
 
-Request::Request(VmkCORDIC_r_16 *dut, size_t n) {
-  this->dut = dut;
-  this->n = n;
-  i = 0;
-}
+Request::Request(std::shared_ptr<VmkCORDIC_r_16> dut, size_t n) : dut(dut), n(n), i(0) {}
 
 void Request::put(uint64_t t) {
   if (dut->CLK == 1) {
