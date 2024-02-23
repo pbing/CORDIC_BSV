@@ -12,9 +12,6 @@ Response::Response(std::shared_ptr<VmkCORDIC_r_16> dut, size_t n) : dut(dut), n(
   z = std::make_unique<int32_t[]>(n);
 }
 
-Response::~Response() {
-}
-
 // https://graphics.stanford.edu/~seander/bithacks.html#FixedSignExtend
 template <typename T, unsigned B>
 inline T signextend(const T x)

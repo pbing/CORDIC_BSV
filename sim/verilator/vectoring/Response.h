@@ -15,7 +15,6 @@ class Response {
   double xerr, yerr, zerr;
 
   Response(std::shared_ptr<VmkCORDIC_v_16> dut, size_t n);
-  ~Response();
   void get();
   void calc_err();
 };

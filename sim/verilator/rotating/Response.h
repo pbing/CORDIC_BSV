@@ -16,7 +16,6 @@ class Response {
   double xenob, yenob; 
 
   Response(std::shared_ptr<VmkCORDIC_r_16> dut, size_t n);
-  ~Response();
   void get();
   void calc_err();
   void enob(size_t bin);
