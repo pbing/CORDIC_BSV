@@ -98,20 +98,20 @@ void Response::enob(size_t bin) {
   }
 
   err = gsl_fft_real_radix2_transform(xh.get(), 1, n);
-  if (err < 0) fprintf(stderr, "FFT(x)=%s", gsl_strerror(err));
+  if (err < 0) fprintf(stderr, "gsl_fft_real_radix2_transform(xh, 1, %zu): %s\n", n, gsl_strerror(err));
 
   err = gsl_fft_real_radix2_transform(yh.get(), 1, n);
-  if (err < 0) fprintf(stderr, "FFT(y)=%s", gsl_strerror(err));
+  if (err < 0) fprintf(stderr, "gsl_fft_real_radix2_transform(yh, 1, %zu): %s\n", n, gsl_strerror(err));
 
   // convert half complex array to complex array
   auto xc = std::make_unique<double[]>(2*n);
   auto yc = std::make_unique<double[]>(2*n);
 
   err = gsl_fft_halfcomplex_radix2_unpack(xh.get(), xc.get(), 1, n);
-  if (err < 0) fputs(gsl_strerror(err), stderr);
+  if (err < 0) fprintf(stderr, "gsl_fft_halfcomplex_radix2_unpack(xh, xc, 1, %zu): %s\n", n, gsl_strerror(err));
 
   err = gsl_fft_halfcomplex_radix2_unpack(yh.get(), yc.get(), 1, n);
-  if (err < 0) fputs(gsl_strerror(err), stderr);
+  if (err < 0) fprintf(stderr, "gsl_fft_halfcomplex_radix2_unpack(yh, yc, 1, %zu): %s\n", n, gsl_strerror(err));
 
   // calculate power
   auto x2 = std::make_unique<double[]>(n);
