@@ -42,16 +42,16 @@ Truncation of the outputs results in a negative bias of half a LSB. Rounding hal
 Convergent rounding (round half to even) removes the bias completely.
 
 ### Truncating
-|  mode                                             | xerr     | yerr     | zerr     |
-|---------------------------------------------------|----------|----------|----------|
-| [rotating](sim/verilator/rotating/Response.cpp)   | 0.719910 | 0.721136 | 0.779059 |
-| [vectoring](sim/verilator/vectoring/Response.cpp) | 1.629323 | 0.706697 | 0.705270 |
+|  mode                                             | xerr     | yerr     | zerr       | xenob     | yenob     |
+|---------------------------------------------------|----------|----------|------------|-----------|-----------| 
+| [rotating](sim/verilator/rotating/Response.cpp)   | 0.719916 | 0.721141 | 0.779065   | 15.894761 | 15.895094 |
+| [vectoring](sim/verilator/vectoring/Response.cpp) | 1.629335 | 0.706702 | 255.999018 | -         | -         |
 
 ### Round half up
-|  mode                                             | xerr     | yerr     | zerr     |
-|---------------------------------------------------|----------|----------|----------|
-| [rotating](sim/verilator/rotating/Response.cpp)   | 0.528804 | 0.528490 | 0.000000 |
-| [vectoring](sim/verilator/vectoring/Response.cpp) | 1.135224 | 0.612970 | 0.044194 |
+|  mode                                             | xerr     | yerr     | zerr     |xenob      | yenob     |
+|---------------------------------------------------|----------|----------|----------|-----------|-----------|
+| [rotating](sim/verilator/rotating/Response.cpp)   | 0.528808 | 0.528494 | 0.000000 | 15.888566 | 15.888126 |
+| [vectoring](sim/verilator/vectoring/Response.cpp) | 1.135232 | 0.612975 | 0.044195 |-          | -         |
 
 ### Convergent rounding
 |  mode                                             | xerr     | yerr     | zerr     | xenob     | yenob     |
